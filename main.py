@@ -6,6 +6,7 @@ import re
 import numpy as np
 import requests
 import os
+import datetime
 # Regular expression patterns
 pattern_only_Thai = r'[ก-๛]+'
 pattern_only_Thai_dot = r'[ก-๛.]+'
@@ -43,10 +44,35 @@ def extract_bank_account(item):
     return item[0]
 
 def extract_dates(item):
+    thai_month_names = {
+    'ม.ค.': 'Jan',
+    'ก.พ.': 'Feb',
+    'มี.ค.': 'Mar',
+    'เม.ย.': 'Apr',
+    'พ.ค.': 'May',
+    'มิ.ย.': 'Jun',
+    'ก.ค.': 'Jul',
+    'ส.ค.': 'Aug',
+    'ก.ย.': 'Sep',
+    'ต.ค.': 'Oct',
+    'พ.ย.': 'Nov',
+    'ธ.ค.': 'Dec',
+}
+    dates = []
     thai_word = re.findall(pattern_only_Thai, item[1])
     if len(thai_word) == 1:
         item.pop(1)
-    dates=(re.findall(pattern_start_Num, item[1]))
+    thai_date = re.findall(pattern_start_Num, item[1])
+    words = thai_date[0].split(' ')
+    day = words[0]
+    month = thai_month_names[words[1]]
+    year = int(words[2])-543
+    time = words[3]
+    date_object = datetime.datetime(year, datetime.datetime.strptime(month, "%b").month, int(day), int(time.split(":")[0]), int(time.split(":")[1]))
+    date_with_timezone = date_object.replace(tzinfo=datetime.timezone(datetime.timedelta(hours=7)))
+    iso_8601_date = date_with_timezone.isoformat()
+    dates.append(iso_8601_date)
+   
     return dates
     
 def extract_reference(item):
