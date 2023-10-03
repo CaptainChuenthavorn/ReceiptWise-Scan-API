@@ -58,6 +58,7 @@ def extract_reference(item):
     return references
 
 def extract_sender_name(item):
+
     sender_names = re.findall(pattern_only_Thai_dot, item[4]) 
     # sender_names = [re.findall(pattern_only_Thai_dot, item[4]) for item in data]
     return sender_names
@@ -78,14 +79,17 @@ def extract_receiver_info(items):
 
     big_pop=[]
     # for items in data:
+    print('item[6]')
+    print(items[6])
+
     if not re.search(pattern_start_Num, items[6]) and len(items[6]) <= 8:
         items.pop(6)
     receiptent_name.append(re.findall(pattern_only_ThaiEngNum, items[6]))
-
+    print('receiptant_name',receiptent_name)
     amount_idx = [i for i, item in enumerate(items) if re.search('.*จำนวนเงิน.*', item) or re.search('.*amount.*', item)]
     # print(amount_idx,items)
     receiptent_info.append(''.join(items[6:amount_idx[0]]))
-    
+    print('receiptent_info',receiptent_info)
     for i, item in enumerate(receiptent_info):
         if re.search('.*biller.*', item) or re.search('.*comp.*', item) or re.search('.*บัญชีรับชำระ.*', item):
             # print('this is shop',item)
@@ -122,23 +126,30 @@ def extract_receiver_info(items):
                     big_pop.extend([shopName.group(0)])          
 
         else: 
-            # print('this is normal',item)
+            print('this is normal realname',item)
             modified_text = ''
             realname = re.search('.+?(?= x| [0-9])', item)
+            print(realname)
             if len(re.findall('[ก-๙]', realname[0])) > len(re.findall('[a-zA-Z]', realname[0])):
+                print('in loop if')
                 if re.search(r'.*s.*', realname[0]):
+                    print('in loop if if 135')
                     modified_text = re.sub('s', 'ร', realname.group(0))
                     receiver_realname.append(modified_text)
 
                 elif re.search(r'.*w.*', realname[0]):
+                    print('in loop elif 140')
                     modified_text = re.sub('w', 'พ', realname.group(0))
                     receiver_realname.append(modified_text)
 
                 else:
+                    print('in loop else 145')
                     receiver_realname.append(realname.group(0))
 
             else:
+                print('in loop realname')
                 receiver_realname.append(realname.group(0))
+                print('realname group 0',receiver_realname)
             
 
             accountNumber = re.search('(?= x| [0-9]).*', item)
@@ -147,11 +158,12 @@ def extract_receiver_info(items):
                 big_pop.append([realname.group(0),accountNumber.group(0)])
             else:
                 big_pop.append([modified_text,accountNumber.group(0)])
-
-    with open('1bigpop.txt','w',encoding='utf-8') as file:
-        for i in big_pop:
-            print(i)
-            file.write(str(i)+'\n')
+            print('big_pop',big_pop)
+    # with open('1bigpop.txt','w',encoding='utf-8') as file:
+    #     for i in big_pop:
+    #         print(i)
+    #         file.write(str(i)+'\n')
+    print('big_pop before return',big_pop)
     return big_pop
 
 
@@ -216,6 +228,7 @@ def process_image():
         tempdata=[]
         for item in results:
             tempdata.append(item[1])
+        print(tempdata)
         # stringlist_result = ''.join(tempdata) 
         # print('MAP TO VARIABLE************************************')
         # """ MAP TO VARIABLE """
@@ -277,16 +290,29 @@ def process_image():
 
         # Read and process text files
         list_data = tempdata
-        
+        print('tempdata:',tempdata)
+        print('**************')
         # Extract data
         bank_accounts = extract_bank_account(list_data)
+        
+        print('bankaccount:',bank_accounts)
         dates = extract_dates(list_data)
+        print('Date:',dates)
         references = extract_reference(list_data)
+        print('tempdata:',tempdata)
+        print('references:',references)
+        
+        print('listdata:',list_data)
         sender_names = extract_sender_name(list_data)
+        print('sender_names',sender_names)
         sender_account_numbers = extract_sender_account(list_data)
+        print('sender_account_numbers',sender_account_numbers)
         receiver_realname = extract_receiver_info(list_data)
+        print('receiver_realname:',receiver_realname)
         amount = extract_amount(list_data)
+        print('amount',amount)
         other = extract_other(list_data)
+        print('other',other)
 
         print()
         print(len(bank_accounts))
