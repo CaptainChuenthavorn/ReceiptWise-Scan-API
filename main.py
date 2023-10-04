@@ -229,19 +229,26 @@ reader = easyocr.Reader(lang_list=['th', 'en'], model_storage_directory='.')
 def process_image():
     try:
         # Get the image URL from the JSON payload in the request body
-        data = request.get_json()
-        image_url = data.get('image_url')
-        if not image_url:
-            return jsonify({"error": "No image URL provided"})
+        # data = request.get_json()
+        # image_url = data.get('image_url')
+        # if not image_url:
+        #     return jsonify({"error": "No image URL provided"})
 
-        # Download the image from the URL
-        response = requests.get(image_url)
-        if response.status_code != 200:
-            return jsonify({"error": "Failed to download the image"})
+        # # Download the image from the URL
+        # response = requests.get(image_url)
+        # if response.status_code != 200:
+        #     return jsonify({"error": "Failed to download the image"})
 
 
         # Read the image using OpenCV
-        image = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+        # image = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+        if 'image' not in request.files:
+            return jsonify({"error": "No image provided in the request"})
+
+        image_file = request.files['image']
+
+        # Read the image using OpenCV
+        image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
 
 
         # Perform OCR on the image
