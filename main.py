@@ -206,8 +206,15 @@ model = torch.load(model_path, map_location='cpu')
 # Create an EasyOCR reader instance with the loaded model
 reader = easyocr.Reader(lang_list=['th', 'en'], model_storage_directory='.')
 
+def get_request_header(request):
+    header_data = []
+    for header in request.headers:
+        header_data.append(" : ".join(header))
+    return header_data
+
 @app.route('/process_image', methods=['POST'])
 def process_image():
+    print(get_request_header(request))
     try:
 
         if 'image' not in request.files:
@@ -260,5 +267,13 @@ def process_image():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        "message": "welcome to receiptwise-scan-api",
+        "header": get_request_header(request)
+    })
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8005)
