@@ -217,10 +217,10 @@ def process_image():
     print(get_request_header(request))
     try:
 
-        if 'image' not in request.files:
-            return jsonify({"error": "No image provided in the request"})
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided in the request"})
 
-        image_file = request.files['image']
+        image_file = request.files['file']
 
         # Read the image using OpenCV
         image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
