@@ -6,5 +6,5 @@ services:
     image: tsphere101/receiptwise-scan-api:latest  
     container_name: receiptwise-scan-api
     ports:
-      - "8005:8005"  
+      - "80:80"  
     restart: always  
