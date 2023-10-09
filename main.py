@@ -245,7 +245,14 @@ def process_image():
         receiver_realname = extract_receiver_info(list_data)
         amount = extract_amount(list_data)
         other = extract_other(list_data)
-
+        dates = dates[0]
+        references = ' '.join(references)
+        sender_names = ' '.join(sender_names)
+        sender_account_numbers = ''.join(sender_account_numbers)
+        receiver_account_numbers = receiver_realname[0][1]
+        receiver_realname = receiver_realname[0][0]
+        amount = ''.join(amount)
+        other = ''.join(other)
         # Create a JSON response
         response_data = {
             "bank_accounts":bank_accounts,
@@ -254,7 +261,7 @@ def process_image():
             "sender_name": sender_names,
             "sender_account_number": sender_account_numbers,
             "recipient_name": receiver_realname,
-            # "recipient_account_number": receiptent_account_number,
+            "recipient_account_number": receiver_account_numbers,
             "amount": amount ,
             "memo": other,
 
