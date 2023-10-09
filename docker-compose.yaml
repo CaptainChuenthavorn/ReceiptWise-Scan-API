@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  # Flask Application Service
+  web:
+    image: tsphere101/receiptwise-scan-api:latest  
+    container_name: receiptwise-scan-api
+    ports:
+      - "8005:8005"  
+    restart: always  
