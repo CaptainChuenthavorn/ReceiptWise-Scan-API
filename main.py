@@ -224,7 +224,7 @@ def process_image():
 
         # Read the image using OpenCV
         image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
-
+        print('image Shape:',image.shape)
 
         # Perform OCR on the image
         results = reader.readtext(image, paragraph=True, detail=1, add_margin=0.148,
@@ -245,6 +245,7 @@ def process_image():
         receiver_realname = extract_receiver_info(list_data)
         amount = extract_amount(list_data)
         other = extract_other(list_data)
+        print('date1:',dates)
         dates = dates[0]
         references = ' '.join(references)
         sender_names = ' '.join(sender_names)
@@ -253,6 +254,10 @@ def process_image():
         receiver_realname = receiver_realname[0][0]
         amount = ''.join(amount)
         other = ''.join(other)
+        print('date2:',dates)
+        if "ข้อมูลเพิ่มเติมจากผู้ไห้บริการ " in other:
+            other=other.split("ข้อมูลเพิ่มเติมจากผู้ไห้บริการ ",1)[1]
+            print('other new',other)
         # Create a JSON response
         response_data = {
             "bank_accounts":bank_accounts,
